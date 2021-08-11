@@ -2,10 +2,15 @@ import numpy as np
 import pylas
 import cv2
 import math
+import networkx as nx
 
 
 def sigmoid(x):
     return 1/(1+math.exp(-0.7 * x))
+
+
+def edge_weight(target, home, matrix):
+    return np.abs(matrix[target] - matrix[home])
 
 
 las = pylas.read("./color.laz", 'r')
@@ -81,16 +86,26 @@ for idx, element in np.ndenumerate(d):
 
 print(average_matrix, '\n')
 
-i_input = int(input('Input the x-coordinate of the starting node: '))
-j_input = int(input('Input the y-coordinate of the starting node: '))
-print('(', + i_input, ',', + j_input, ') is the starting node.')
-
-starting_node = average_matrix[i_input, j_input]
-print(starting_node)
+i_input_home = int(input('Input the x-coordinate of the starting node: '))
+j_input_home = int(input('Input the y-coordinate of the starting node: '))
+print('(', + i_input_home, ',', + j_input_home, ') is the starting node.')
 
 i_input_destination = int(input('Input the x-coordinate of the ending node: '))
 j_input_destination = int(input('Input the y-coordinate of the ending node: '))
-print('(', + i_input, ',', + j_input, ') is the ending node.')
+print('(', + i_input_destination, ',', + j_input_destination, ') is the ending node.')
 
-ending_node = average_matrix[i_input_destination, j_input_destination]
-print(ending_node)
+print('\n')
+
+raster_graph = nx.grid_2d_graph(5, 5)
+
+for idx2, element2 in np.ndenumerate(average_matrix):
+    raster_graph.add_node(average_matrix[idx2])
+
+for index, value in np.ndenumerate(average_matrix):
+    u = index
+    for u, v, d in raster_graph.edges(data=True):
+        d['weight'] = edge_weight(u, v, average_matrix)
+    print(raster_graph.adj[index].items())
+
+short = nx.shortest_path(raster_graph, (i_input_home, j_input_home), (i_input_destination, j_input_destination))
+print(short)
