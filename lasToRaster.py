@@ -96,7 +96,7 @@ print('(', + i_input_destination, ',', + j_input_destination, ') is the ending n
 
 print('\n')
 
-raster_graph = nx.grid_2d_graph(5, 5)
+raster_graph = nx.grid_2d_graph(r, r)
 
 for idx2, element2 in np.ndenumerate(average_matrix):
     raster_graph.add_node(average_matrix[idx2])
