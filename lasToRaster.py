@@ -105,7 +105,6 @@ for index, value in np.ndenumerate(average_matrix):
     u = index
     for u, v, d in raster_graph.edges(data=True):
         d['weight'] = edge_weight(u, v, average_matrix)
-    print(raster_graph.adj[index].items())
 
 short = nx.shortest_path(raster_graph, (i_input_home, j_input_home), (i_input_destination, j_input_destination))
 print(short)
